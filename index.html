@@ -1,0 +1,946 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AGRIVAL · Équipe A</title>
+<style>
+:root{
+  --bg:#f4f5f8; --surface:#ffffff; --surface-2:#f0f2f6; --text:#151a24; --muted:#5b6475; --faint:#8a92a3; --line:#e2e5ec;
+  --accent:#2a56c6; --accent-soft:#e6edfb;
+  --daily:#9a4d00; --daily-bg:#fff6e8; --daily-line:#f0d3a6;
+  --ok:#137a48; --ok-soft:#e3f4ea; --late:#b42318; --late-soft:#fdecea;
+  --nounedia:#5a48d2; --raph:#0c7f80; --nadia:#c0336a;
+  --prepare:#5f6d8c; --explore:#2a56c6; --realize:#137363; --deploy:#a8530a;
+  --shadow:0 1px 2px rgba(16,24,40,.05),0 2px 10px rgba(16,24,40,.04);
+  --radius:14px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#10131b; --surface:#191d28; --surface-2:#222736; --text:#e9ecf3; --muted:#a2aabb; --faint:#7a8296; --line:#2c3243;
+    --accent:#86a6ff; --accent-soft:#1f2b4d;
+    --daily:#f3b25c; --daily-bg:#2e2412; --daily-line:#5a4220;
+    --ok:#5fd59a; --ok-soft:#14321f; --late:#ff8f84; --late-soft:#3a1c1a;
+    --nounedia:#aa9eff; --raph:#4fd0c8; --nadia:#ff8db6;
+    --prepare:#8796b8; --explore:#86a6ff; --realize:#53c7ad; --deploy:#f0a35b;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10131b; --surface:#191d28; --surface-2:#222736; --text:#e9ecf3; --muted:#a2aabb; --faint:#7a8296; --line:#2c3243;
+  --accent:#86a6ff; --accent-soft:#1f2b4d;
+  --daily:#f3b25c; --daily-bg:#2e2412; --daily-line:#5a4220;
+  --ok:#5fd59a; --ok-soft:#14321f; --late:#ff8f84; --late-soft:#3a1c1a;
+  --nounedia:#aa9eff; --raph:#4fd0c8; --nadia:#ff8db6;
+  --prepare:#8796b8; --explore:#86a6ff; --realize:#53c7ad; --deploy:#f0a35b;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif}
+button{font:inherit;color:inherit}
+.wrap{max-width:1200px;margin:0 auto;padding:0 16px 64px}
+.muted{color:var(--muted)} .faint{color:var(--faint)} .small{font-size:14px} .tiny{font-size:12.5px}
+h1,h2,h3{line-height:1.25;margin:0}
+h2{font-size:19px;font-weight:650}
+h3{font-size:16px;font-weight:650}
+
+/* Header */
+.app-header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;padding:22px 0 14px}
+.app-header h1{font-size:23px;font-weight:700;letter-spacing:-.01em}
+.app-header .sub{color:var(--muted);font-size:14px;margin-top:2px}
+.sync{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sync-status{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
+.sync-status i{width:8px;height:8px;border-radius:50%;background:var(--faint);display:inline-block}
+.sync-status.ok i{background:var(--ok)} .sync-status.busy i{background:var(--daily)} .sync-status.err i{background:var(--late)}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:7px 14px;cursor:pointer;font-size:14px}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn:focus-visible,.tab:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Tabs */
+.tabs{position:sticky;top:0;z-index:10;background:var(--bg);border-bottom:1px solid var(--line);margin-bottom:22px}
+.tabs-inner{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;padding:6px 0}
+.tabs-inner::-webkit-scrollbar{display:none}
+.tab{flex:none;border:0;background:transparent;padding:9px 14px;border-radius:10px;cursor:pointer;font-size:15px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.tab:hover{background:var(--surface-2);color:var(--text)}
+.tab[aria-current="page"]{background:var(--surface);color:var(--text);font-weight:650;box-shadow:var(--shadow)}
+.tab .dot{width:9px;height:9px;border-radius:50%}
+
+/* Generic */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.stack>*+*{margin-top:18px}
+.section-title{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:28px 0 12px}
+.grid{display:grid;gap:16px}
+.cols-3{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.cols-4{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.bar{height:6px;background:var(--surface-2);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:99px;background:var(--accent)}
+.tag{display:inline-block;font-size:12px;font-weight:600;line-height:1.6;border-radius:6px;padding:0 7px;white-space:nowrap;background:var(--surface-2);color:var(--muted)}
+.tag.deliv{background:#fdeadb;color:#93400b}
+.tag.bonus{background:#fff1c4;color:#6f5200}
+.tag.transverse{background:#fde6ef;color:#a3184a}
+.tag.late{background:var(--late-soft);color:var(--late)}
+.tag.today{background:var(--accent-soft);color:var(--accent)}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .tag.deliv{background:#46291a;color:#ffbf91}
+  :root:not([data-theme="light"]) .tag.bonus{background:#43380f;color:#ffe08a}
+  :root:not([data-theme="light"]) .tag.transverse{background:#45192b;color:#ff9fc3}
+}
+:root[data-theme="dark"] .tag.deliv{background:#46291a;color:#ffbf91}
+:root[data-theme="dark"] .tag.bonus{background:#43380f;color:#ffe08a}
+:root[data-theme="dark"] .tag.transverse{background:#45192b;color:#ff9fc3}
+
+/* Day hero */
+.hero{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:center;justify-content:space-between}
+.hero .day-name{font-size:24px;font-weight:700;letter-spacing:-.01em}
+.phase-label{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:650;text-transform:uppercase;letter-spacing:.05em}
+.phase-label i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.deadline-box{border-left:4px solid var(--accent);padding:4px 0 4px 14px}
+.deadline-box strong{display:block;font-size:17px}
+.day-switch{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+.day-switch button{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:5px 11px;cursor:pointer;font-size:14px;min-width:44px}
+.day-switch button[aria-pressed="true"]{background:var(--text);color:var(--surface);border-color:var(--text)}
+.day-switch button.is-today{box-shadow:inset 0 -3px 0 var(--accent)}
+
+/* Member column */
+.member-col{display:flex;flex-direction:column;gap:14px;border-top:5px solid var(--mc);padding-top:16px}
+.member-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.member-top h2{font-size:20px}
+.member-role{font-size:14px;color:var(--muted);margin-top:2px}
+.count-big{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;text-align:right;line-height:1.1}
+.count-big span{display:block;font-size:12px;font-weight:500;color:var(--muted)}
+.block-title{font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:2px 0 6px}
+
+/* Routine */
+.routine{background:var(--daily-bg);border:1px solid var(--daily-line);border-radius:12px;padding:12px 14px}
+.routine .block-title{color:var(--daily)}
+.routine ul{list-style:none;margin:0;padding:0}
+.routine li{display:flex;gap:10px;align-items:flex-start;padding:6px 0}
+.routine li+li{border-top:1px dashed var(--daily-line)}
+.routine .time{display:inline-block;font-size:12.5px;font-weight:700;color:var(--daily);margin-right:6px;white-space:nowrap}
+.common-routine{margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
+.common-routine ul{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:6px 24px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.common-routine li{font-size:14.5px;display:flex;gap:10px}
+.common-routine li b{flex:none;min-width:82px;color:var(--daily);font-size:13px;padding-top:1px}
+.routine label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;flex:1;font-size:14.5px}
+.routine .done-text{text-decoration:line-through;color:var(--muted)}
+
+/* Task */
+.task-list{list-style:none;margin:0;padding:0}
+.task{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.task:first-child{border-top:0}
+.check{flex:none;width:22px;height:22px;margin-top:1px;accent-color:var(--accent);cursor:pointer}
+.check:disabled{cursor:not-allowed;opacity:.5}
+.task-body{flex:1;min-width:0}
+.task-title{font-weight:560;font-size:15.5px}
+.task.done .task-title{text-decoration:line-through;color:var(--muted);font-weight:500}
+.task-meta{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;margin-top:4px;font-size:13px;color:var(--muted)}
+.task-meta .due{color:var(--text);font-weight:650}
+.task-meta .who{color:var(--ok);font-weight:600}
+.task details{margin-top:6px}
+.task details>summary{cursor:pointer;font-size:13.5px;color:var(--accent);list-style:none;display:inline-block}
+.task details>summary::-webkit-details-marker{display:none}
+.task details>summary::before{content:"+ "}
+.task details[open]>summary::before{content:"− "}
+.task .detail-text{font-size:14px;color:var(--muted);margin:6px 0 0}
+.task ol{margin:6px 0 0 20px;padding:0;font-size:14px}
+.task ol li{margin:3px 0}
+.support-line{font-size:13.5px;color:var(--muted);padding-top:8px;border-top:1px solid var(--line)}
+.support-line strong{color:var(--text);font-weight:600}
+.late-box{background:var(--late-soft);border-radius:12px;padding:10px 14px}
+.late-box .block-title{color:var(--late)}
+.late-box .task{border-color:rgba(180,35,24,.18)}
+.empty{font-size:14px;color:var(--muted);padding:6px 0}
+
+/* Roadmap */
+.phase-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;margin:30px 0 10px;padding-left:12px;border-left:5px solid var(--pc)}
+.phase-head h2{font-size:20px}
+.phase-head p{margin:0;width:100%;color:var(--muted);font-size:14.5px}
+.day-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;box-shadow:var(--shadow)}
+.day-card>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:14px 18px}
+.day-card>summary::-webkit-details-marker{display:none}
+.day-card>summary .chev{transition:transform .15s;color:var(--faint)}
+.day-card[open]>summary .chev{transform:rotate(90deg)}
+.day-card>summary .d-title{font-weight:650}
+.day-card>summary .d-sub{color:var(--muted);font-size:14px}
+.day-card>summary .d-count{margin-left:auto;font-size:13.5px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.day-card.is-today{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.day-card .day-inner{padding:0 18px 8px 18px}
+
+/* Overview */
+.phase-card{border-top:5px solid var(--pc)}
+.phase-card ul{margin:8px 0 0 18px;padding:0;font-size:14.5px}
+.gate{margin-top:12px;font-size:14px;background:var(--surface-2);border-radius:10px;padding:8px 12px}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:650}
+tr:last-child td{border-bottom:0}
+.table-scroll{overflow-x:auto}
+.num{text-align:center;font-variant-numeric:tabular-nums}
+.heat-1{background:var(--accent-soft)} .heat-2{background:color-mix(in srgb,var(--accent) 28%,transparent)} .heat-3{background:color-mix(in srgb,var(--accent) 45%,transparent)}
+.row-next{background:var(--accent-soft)}
+.cell-task{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;margin:4px 0}
+.cell-task input{width:17px;height:17px;flex:none;margin-top:2px;accent-color:var(--accent)}
+.cell-task.done span{text-decoration:line-through;color:var(--muted)}
+.list{margin:0 0 0 18px;padding:0}
+.list li{margin:6px 0}
+
+/* Dialog */
+dialog{border:1px solid var(--line);border-radius:16px;background:var(--surface);color:var(--text);width:min(560px,94vw);padding:22px}
+dialog::backdrop{background:rgba(10,14,25,.45)}
+.field{display:block;margin:12px 0}
+.field span{display:block;font-size:13.5px;font-weight:600;margin-bottom:4px}
+.field input,.field select{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--surface-2);color:var(--text);font:inherit;font-size:14.5px}
+.field small{display:block;color:var(--muted);font-size:12.5px;margin-top:4px}
+.row{display:flex;gap:10px}
+.row>*{flex:1}
+.dialog-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:16px}
+.notice{font-size:13.5px;border-radius:10px;padding:10px 12px;background:var(--surface-2);color:var(--muted)}
+
+footer{margin-top:40px;font-size:13px;color:var(--faint)}
+@media (max-width:600px){
+  .app-header h1{font-size:20px}
+  .hero .day-name{font-size:20px}
+  .card{padding:16px}
+  .row{flex-direction:column}
+}
+@media print{.tabs,.sync,.day-switch{display:none}.card,.day-card{box-shadow:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="app-header">
+    <div>
+      <h1>Mission AGRIVAL · Équipe A</h1>
+      <div class="sub">Serious Game SAP S/4HANA · flux ventes et finance, Lyon AG01 · du 18 au 27/11</div>
+    </div>
+    <div class="sync">
+      <span id="sync-status" class="sync-status" role="status"><i></i><span>Chargement…</span></span>
+      <button class="btn" data-action="settings">Paramètres</button>
+    </div>
+  </header>
+  <nav class="tabs" aria-label="Vues"><div class="tabs-inner" id="tabs"></div></nav>
+  <main id="main"></main>
+  <footer>Source : livret apprenant AGRIVAL, document de référence de la mission. Ne jamais écrire de mot de passe SAP sur cette page.</footer>
+</div>
+
+<dialog id="settings-dialog" aria-labelledby="settings-title">
+  <h2 id="settings-title">Paramètres de partage</h2>
+  <p class="small muted" style="margin:6px 0 0">L'avancement est enregistré dans le dépôt GitHub de l'équipe. Sans jeton, la page reste en lecture seule (ou en mode local hors GitHub).</p>
+  <label class="field"><span>Je suis</span>
+    <select id="set-identity"><option value="">Choisir…</option><option value="nounedia">Nounedia</option><option value="raph">Raph</option><option value="nadia">Nadia</option></select>
+    <small>Sert à afficher qui a coché quoi.</small></label>
+  <div class="row">
+    <label class="field"><span>Propriétaire du dépôt</span><input id="set-owner" autocomplete="off" spellcheck="false"></label>
+    <label class="field"><span>Nom du dépôt</span><input id="set-repo" autocomplete="off" spellcheck="false"></label>
+  </div>
+  <label class="field"><span>Jeton GitHub (écriture)</span><input id="set-token" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_…">
+    <small>Jeton à accès limité à ce seul dépôt (Contents : lecture et écriture). Il reste dans ce navigateur et n'est jamais écrit dans le dépôt.</small></label>
+  <p id="settings-msg" class="notice" hidden></p>
+  <div class="dialog-actions">
+    <button class="btn" data-action="forget-token">Oublier le jeton</button>
+    <button class="btn" data-action="close-settings">Fermer</button>
+    <button class="btn primary" data-action="save-settings">Enregistrer et tester</button>
+  </div>
+</dialog>
+
+<script>
+"use strict";
+/* =========================================================
+   Static data, taken from the AGRIVAL learner booklet
+   ========================================================= */
+const members = {
+  nounedia: { id:"nounedia", name:"Nounedia Elizee", short:"Nounedia", user:"NELIZEE", module:"MM · achats", color:"var(--nounedia)",
+    role:"Cheffe de projet · consultante fonctionnelle MM",
+    scope:"Pilote le projet : planning, seule interlocutrice du client, stand-up, arbitrages. Porte les flux achats dans SAP (fournisseurs, infoachat, groupe d'acheteurs A10, ME21N, MIGO, MIRO, frais au poids) et la note de cadrage, la note de crise, l'ouverture et la conclusion de la soutenance." },
+  raph: { id:"raph", name:"Raphaël Legros", short:"Raph", user:"RLEGROS", module:"SD · ventes", color:"var(--raph)",
+    role:"Responsable recette · consultant fonctionnel SD",
+    scope:"Porte les ventes dans SAP (clients, prix et échelles, quantité minimale, blocage à la vente, VA01, VL01N, VF01, facture groupée) et la recette : plan de test, exécution, journal des anomalies, journal des preuves SAP, PV de recette." },
+  nadia: { id:"nadia", name:"Nadia Ouahrouche", short:"Nadia", user:"NOUAHROUCHE", module:"FI · finance", color:"var(--nadia)",
+    role:"Consultante fonctionnelle FI · experte FI transverse (B, C, D)",
+    scope:"Contrôle des pièces comptables, paiement fournisseur, encaissement client, postes ouverts, chapitre FI et assemblage de la spécification. Rôle transverse pour les équipes B, C et D, uniquement dans SAP et jamais sur leurs livrables : ses tâches d'équipe sont placées hors de ses jours transverses." }
+};
+const memberIds = ["nounedia","raph","nadia"];
+
+const days = [
+  { n:1, date:"2026-11-18", label:"Mercredi 18/11", short:"Mer. 18/11", focus:"Lancement" },
+  { n:2, date:"2026-11-19", label:"Jeudi 19/11", short:"Jeu. 19/11", focus:"Entretien client" },
+  { n:3, date:"2026-11-20", label:"Vendredi 20/11", short:"Ven. 20/11", focus:"Note de cadrage et analyse" },
+  { n:4, date:"2026-11-23", label:"Lundi 23/11", short:"Lun. 23/11", focus:"Spécification et paramétrage" },
+  { n:5, date:"2026-11-24", label:"Mardi 24/11", short:"Mar. 24/11", focus:"Flux achat INT-01" },
+  { n:6, date:"2026-11-25", label:"Mercredi 25/11", short:"Mer. 25/11", focus:"Flux vente INT-02 et incident INT-03" },
+  { n:7, date:"2026-11-26", label:"Jeudi 26/11", short:"Jeu. 26/11", focus:"Recette et crise" },
+  { n:8, date:"2026-11-27", label:"Vendredi 27/11", short:"Ven. 27/11", focus:"Soutenance" }
+];
+
+const phases = [
+  { id:"prepare", name:"Prepare", color:"var(--prepare)", span:"J1 · 18/11", goal:"Lancer le projet : équipe, casquettes, accès SAP et règles de travail.",
+    activities:["Équipe et casquettes fixées pour toute la mission","Accès SAP de chacun","Standards : marquage A-, journal des preuves"],
+    gate:"Connexion SAP OK pour les trois, casquettes et répartition confirmées." },
+  { id:"explore", name:"Explore", color:"var(--explore)", span:"J2–J3 · 19–20/11", goal:"Fit-to-standard : comprendre le besoin, le confronter au standard SAP et trancher chaque exigence.",
+    activities:["Entretien client et réunions de suivi","Matrice d'adéquation : standard, à paramétrer ou écart","BPMN, architecture, risques, hypothèses"],
+    gate:"L1 (20/11 10h15) et L2 (20/11 16h30) remis, chaque exigence a un verdict." },
+  { id:"realize", name:"Realize", color:"var(--realize)", span:"J4–J7 · 23–26/11", goal:"Spécifier, paramétrer, créer les données, exécuter les flux et les tester.",
+    activities:["Spécification et fiches de paramétrage (L3)","Données de base marquées A-","INT-01, INT-02, INT-03","Exécution de la recette"],
+    gate:"L3 remis, INT-01 et INT-02 de bout en bout, journal des preuves à jour, INT-03 traité." },
+  { id:"deploy", name:"Deploy", color:"var(--deploy)", span:"J7–J8 · 26–27/11", goal:"Décider du Go ou No-Go, gérer la crise, préparer la bascule et défendre la solution.",
+    activities:["PV de recette et décision argumentée","Note de crise","Reprise des données et bascule","Soutenance avec démo"],
+    gate:"L4 remis sans Go sur anomalie bloquante, soutenance faite." }
+];
+const phaseByDay = { 1:"prepare", 2:"explore", 3:"explore", 4:"realize", 5:"realize", 6:"realize", 7:"realize", 8:"deploy" };
+const phaseOverrides = { "j2-sap-check":"prepare", "j3-master-supplier":"realize", "j3-master-customer":"realize", "j3-master-articles":"realize",
+  "j7-pv":"deploy", "j7-crisis":"deploy", "j7-l4-final":"deploy", "j7-rehearsal":"deploy" };
+
+const deadlines = [
+  { id:"L1", at:"2026-11-20T10:15:00+01:00", label:"L1 · Note de cadrage", owner:"nounedia", note:"2 pages max, 3 risques minimum, comptes rendus d'entretien" },
+  { id:"L2", at:"2026-11-20T16:30:00+01:00", label:"L2 · Document d'analyse", owner:"raph", note:"Matrice E01–E16 et besoins d'entretien, BPMN, architecture" },
+  { id:"L3", at:"2026-11-23T16:30:00+01:00", label:"L3 · Spécification et paramétrage", owner:"nadia", note:"Mises à jour possibles jusqu'au J7" },
+  { id:"L4", at:"2026-11-26T16:30:00+01:00", label:"L4 · Recette, PV et note de crise", owner:"raph", note:"3 cas par module et INT-01, 02, 03 ; décision Go ou No-Go" },
+  { id:"L5", at:"2026-11-27T09:00:00+01:00", label:"L5 · Soutenance", owner:"nounedia", note:"20 min avec démo SAP et 10 min de questions (créneau à confirmer)" }
+];
+
+/* Daily routines. days = day numbers where the routine applies */
+const commonRoutines = [
+  { id:"c-standup", time:"9h00", text:"Stand-up : écouter l'avancement des équipes", days:[2,3,4,5,6,7] },
+  { id:"c-course", time:"9h15", text:"Cours d'Isabelle : venir avec la question du blocage du jour", days:[2,3,4,5,6,7] },
+  { id:"c-user", time:"Avant SAP", text:"Vérifier son user (Système > Statut) avant toute saisie", days:[1,2,3,4,5,6,7,8] },
+  { id:"c-proof", time:"Chaque doc", text:"Noter le n° de document SAP et faire une capture (user et date visibles), puis envoyer la ligne à Raph", days:[3,4,5,6,7] },
+  { id:"c-mark", time:"Chaque objet", text:"Marquer A- dans le code ou le nom ; tiers dans 12310001–12310099", days:[3,4,5,6,7] },
+  { id:"c-15", time:"Si bloqué", text:"Jamais plus de 15 min : solution de repli du livret (§6.5), la noter, avancer", days:[3,4,5,6,7] },
+  { id:"c-point", time:"16h30", text:"Point de 5 min avec Isabelle (Nounedia parle, chacun prépare son point)", days:[1,2,3,4,5,6,7] },
+  { id:"c-save", time:"17h00", text:"Déposer ses fichiers sur le Drive AURA et mettre à jour ses fiches de paramétrage", days:[3,4,5,6,7] }
+];
+const personalRoutines = {
+  nounedia: [
+    { id:"n-standup", time:"9h00", text:"Présenter l'avancement de l'équipe A en 2 min", days:[2,3,4,5,6,7] },
+    { id:"n-meet", time:"Matin", text:"Demander les réunions client utiles : 2 par jour au plus, ordre du jour en une phrase", days:[3,4,5,6] },
+    { id:"n-cr", time:"Sous 24 h", text:"Envoyer le compte rendu écrit de chaque réunion client", days:[2,3,4,5,6,7] },
+    { id:"n-plan", time:"Fin de journée", text:"Vérifier que le livrable suivant est prêt ; compter les déblocages restants (3 au total)", days:[2,3,4,5,6,7] }
+  ],
+  raph: [
+    { id:"r-journal", time:"Fin de journée", text:"Consolider le journal des preuves : une ligne et une capture par document SAP de chacun", days:[3,4,5,6,7] },
+    { id:"r-plan", time:"Fin de journée", text:"Mettre à jour le plan de test (statuts, n° de document) et prévenir Nounedia des écarts avant 16h30", days:[4,5,6,7] },
+    { id:"r-anom", time:"À chaque KO", text:"Ouvrir une fiche d'anomalie (gravité, données, correction proposée)", days:[5,6,7] },
+    { id:"r-vf04", time:"Facturation", text:"VF04 toujours filtré sur AGSD : ne facturer que nos livraisons", days:[5,6,7] }
+  ],
+  nadia: [
+    { id:"f-check", time:"Dans la journée", text:"Contrôler dans FB03 les pièces comptables des documents du jour", days:[5,6,7] },
+    { id:"f-open", time:"Fin de journée", text:"Lire les postes ouverts (FBL1N, FBL5N) : soldé en vert, reste dû en rouge", days:[5,6,7] },
+    { id:"f-transverse", time:"16h30", text:"Transverse : noter les interventions demandées par B, C ou D et les faire tracer dans leur journal", days:[3,5,6,7] }
+  ]
+};
+
+/* Tasks. lead = owner, with = supporters, each = one task per member */
+const tasks = [
+  /* J1 */
+  { id:"j1-sap-login", day:1, each:true, type:"SAP", title:"Tester sa connexion SAP et changer son mot de passe",
+    steps:["VPN SproClub actif, SAP GUI, mandant 400, langue FR","Mot de passe provisoire à changer (Nadia garde le sien)","Vérifier son nom dans Système > Statut"], ref:"Livret §7.1" },
+  { id:"j1-read", day:1, each:true, type:"Lecture", title:"Lire le cas, le cahier des charges E01–E16 et la pochette du J1", ref:"Livret §2 et §8" },
+  { id:"j1-hats", day:1, lead:"nounedia", with:["raph","nadia"], type:"Organisation", title:"Confirmer les casquettes et la répartition des tâches", detail:"Nounedia cheffe de projet, Raph responsable recette, tous consultants fonctionnels sur leur module. Les casquettes restent les mêmes jusqu'à la fin.", ref:"Livret §4.2" },
+
+  /* J2 */
+  { id:"j2-prep", day:2, lead:"nounedia", with:["raph","nadia"], type:"Réunion", time:"Avant 9h50", title:"Préparer les questions de l'entretien",
+    steps:["Nounedia : achats E01–E06 et planning","Raph : ventes et facturation E07–E11, E15, et les incohérences de l'extrait NAV (cartons de 100245 et 300087, poids manquant de 200112)","Nadia : finance, TVA, paiement, encaissement","Prévoir des questions ouvertes pour faire émerger les besoins non écrits"], ref:"Livret §2.4 et §8.4" },
+  { id:"j2-interview", day:2, lead:"nounedia", with:["raph","nadia"], type:"Réunion", time:"9h50–10h30", title:"Entretien de 40 min avec la direction d'AGRIVAL", detail:"Nounedia pilote, Raph prend les notes, Nadia pose les questions finance. Les personnages répondent sur le métier, pas sur le paramétrage." },
+  { id:"j2-notes", day:2, lead:"raph", with:["nounedia"], type:"Rédaction", title:"Mettre au propre les notes d'entretien avec le n° d'exigence concerné" },
+  { id:"j2-cr", day:2, lead:"nadia", with:["nounedia","raph"], type:"Rédaction", due:"20/11 avant 9h50", title:"Rédiger le compte rendu d'entretien ; Nounedia le relit et l'envoie à Sophie Moreau", ref:"Modèle 9.6" },
+  { id:"j2-open", day:2, lead:"nounedia", with:["raph","nadia"], type:"Réunion", title:"Lister les questions restées ouvertes et demander une réunion client pour le J3 au matin", detail:"Ordre du jour en une phrase." },
+  { id:"j2-l1-draft", day:2, lead:"nounedia", with:["raph","nadia"], type:"Livrable", deliv:"L1", title:"Premier jet de la note de cadrage",
+    steps:["Nounedia : compréhension de la demande, périmètre, planning J1–J8","Raph : 3 risques propres à AGRIVAL avec parade (données NAV incohérentes, SAP partagé, transporteur et go-live)","Nadia : hypothèses de travail côté finance"], ref:"Modèle 9.1" },
+  { id:"j2-sap-check", day:2, each:true, type:"Contrôle", title:"Vérifier dans SAP l'accès à ses transactions, en affichage", detail:"Repérer un problème de droits avant le J3." },
+
+  /* J3 */
+  { id:"j3-l1-final", day:3, lead:"nounedia", with:["raph","nadia"], type:"Livrable", deliv:"L1", due:"20/11 10h15", title:"Finaliser et déposer la note de cadrage sur le Drive AURA",
+    steps:["2 pages au plus, 3 risques minimum avec parade","Comptes rendus d'entretien inclus","Relecture de Raph et Nadia, puis dépôt (retard : −2 points)"] },
+  { id:"j3-meeting", day:3, lead:"nounedia", type:"Réunion", time:"Matin", title:"Réunion client sur les questions ouvertes, compte rendu sous 24 h" },
+  { id:"j3-fi-workshop", day:3, transverse:true, lead:"nadia", type:"Réunion", time:"Horaire à confirmer", title:"Animer l'atelier FI de 20 min pour les équipes B, C et D" },
+  { id:"j3-matrix-mm", day:3, lead:"nounedia", type:"Livrable", deliv:"L2", title:"Matrice d'adéquation : lignes MM (E01–E06) et besoins d'entretien achats",
+    steps:["Une ligne par exigence : processus, fonctionnalité SAP, verdict, solution, argument, phase","Pour chaque écart : solution la plus proche du standard, coût en jours, recommandation"] },
+  { id:"j3-matrix-sd", day:3, lead:"raph", type:"Livrable", deliv:"L2", title:"Matrice d'adéquation : lignes SD (E07–E11, E15) et besoins d'entretien ventes", detail:"Entrepôt de Bordeaux (E12–E14, E16) : pas de profil EWM dans l'équipe A, à classer avec Nounedia en phase 2 ou hors périmètre, avec argument." },
+  { id:"j3-matrix-fi", day:3, lead:"nadia", type:"Livrable", deliv:"L2", title:"Partie finance : traduction comptable et hypothèses FI" },
+  { id:"j3-bpmn-purchase", day:3, lead:"nounedia", type:"Livrable", deliv:"L2", title:"BPMN achats et structure organisationnelle cible", detail:"Un couloir par service, lisible par Marc Dufresne et Sophie Moreau." },
+  { id:"j3-bpmn-sales", day:3, lead:"raph", type:"Livrable", deliv:"L2", title:"BPMN ventes, de la commande à l'encaissement", detail:"Montrer où se lit la marge par client voulue par le PDG." },
+  { id:"j3-architecture", day:3, lead:"nadia", with:["nounedia","raph"], type:"Livrable", deliv:"L2", title:"Schéma d'architecture : SAP, ALIMEA en EDI, terminaux de scan, transporteur, banque", detail:"Pour chaque flèche, la donnée qui circule." },
+  { id:"j3-l2-final", day:3, lead:"raph", with:["nounedia","nadia"], type:"Livrable", deliv:"L2", due:"20/11 16h30", title:"Assembler et déposer le document d'analyse (validé par Nounedia)",
+    steps:["Toutes les exigences ont un verdict, y compris celles de l'entretien","Texte propre à AGRIVAL (un document générique coûte −3 points)"] },
+  { id:"j3-master-supplier", day:3, lead:"nounedia", type:"SAP", time:"Après-midi", title:"Créer les 4 fournisseurs A-",
+    steps:["A-LÉGUMES DU VAL DE LOIRE, A-VERRERIES DU SUD-OUEST, A-MOULIN DE BRESSE, A-FRIGOTRANS ATLANTIQUE","BP, choisir le rôle avant toute saisie, regroupement BP03, langue Français","Société FR01, collectif 21100000, puis AGMM, EUR, 0004, schéma 01"], ref:"Guide 2.2" },
+  { id:"j3-master-customer", day:3, lead:"raph", type:"SAP", time:"Après-midi", title:"Créer les 4 clients A-",
+    steps:["A-CENTRALE ALIMEA, A-RESTO COLLECTIF RHÔNE, A-HALLES DISTRI SUD, A-ÉPICERIE FINE DUBOIS","FR01, collectif 12100000 ; ADV AGSD / 10 / 00","Expédition : 01, division AG01 ; Facture : EXW, 0004, groupe 01, FTX1 = 1, LCFR = 0"], ref:"Guide 2.3" },
+  { id:"j3-master-articles", day:3, lead:"raph", with:["nounedia"], type:"SAP", time:"Après-midi", title:"Créer les 6 articles A- (MM01)",
+    steps:["Référence AGTEST01, division AG01, magasin 121A, AGSD canal 10","A-CONS-01, A-CONS-02, A-SURG-01, A-FRAI-01, A-EMB-01, A-MP-01","Relire l'extrait NAV avant : conversions incohérentes et poids manquant"], ref:"Guide 2.1" },
+  { id:"j3-guide", day:3, each:true, type:"Lecture", time:"16h30", title:"Lire sa section du guide SAP publiée à 16h30 (§3 MM, §4 SD, §5 FI)" },
+
+  /* J4 */
+  { id:"j4-supplier-roles", day:4, lead:"nounedia", type:"SAP", title:"Compléter les fournisseurs et créer les fiches infoachat (ME11, code TVA V6)", ref:"Guide 2.2 et 2.5" },
+  { id:"j4-buyer-group", day:4, lead:"nounedia", type:"SAP", title:"Créer le groupe d'acheteurs A10 (OME4), obligatoire au J4", detail:"Si refusé : groupe 002 et écart noté dans la fiche de paramétrage.", ref:"Guide 3.5" },
+  { id:"j4-articles-units", day:4, lead:"raph", with:["nounedia"], type:"SAP", title:"Unités alternatives et poids brut des 6 articles",
+    steps:["MM02, Données supplémentaires, Unités de quantité","Carton = CRN (CAR refusé), palette : F4","Confiture et yaourt : conversion à trancher et à tracer","Poids brut pour tous, sinon frais de transport à 0"], ref:"Guide 2.1" },
+  { id:"j4-price", day:4, lead:"raph", type:"SAP", title:"E07 : prix catalogue et échelle ALIMEA (VK11, PPR0)",
+    steps:["Vérifier montant, devise, unité et dates avant d'enregistrer","Barèmes : −3 % dès 50 cartons, −6 % dès 200","Si refusé : prix fixe et écart noté"], ref:"Guide 2.4" },
+  { id:"j4-minqty", day:4, lead:"raph", type:"SAP", title:"E08 : quantité minimale de 10 cartons (MM02, vue ADV)", detail:"Le standard donne un avertissement jaune : écart à argumenter si le client veut un blocage strict." },
+  { id:"j4-block", day:4, lead:"raph", type:"SAP", title:"E09 : blocage à la vente (statut 03 avec date de début)", ref:"Guide 4.1" },
+  { id:"j4-e10", day:4, lead:"raph", bonus:true, type:"SAP", title:"Bonus E10 : préparer la facture groupée de la restauration collective (VF04)", ref:"Guide 4.3" },
+  { id:"j4-mm-items", day:4, lead:"nounedia", type:"SAP", title:"Exigences MM : E02 unités, E03 farine 70/30, E04 accord annuel, E05 frais au poids", detail:"Pour chacune : fait dans SAP, décrit en spec ou écart." },
+  { id:"j4-e01", day:4, lead:"nounedia", bonus:true, type:"SAP", title:"Bonus E01 : stratégie de lancement au-delà de 10 000 €", detail:"Ne pas oublier ZBSTYP = F dans la classification.", ref:"Guide 3.5" },
+  { id:"j4-costcenter", day:4, lead:"nadia", with:["nounedia"], type:"SAP", title:"Centre de coûts A-LYON-LOG (KS01) et, si retenu, ordre interne (KO01)", detail:"Nécessaire pour INT-01 : frais de transport sur un centre de coûts, puis KSB1.", ref:"Guide 6" },
+  { id:"j4-test-plan", day:4, lead:"raph", type:"Rédaction", title:"Démarrer le plan de test : 3 cas par module et INT-01, 02, 03", ref:"Modèle 9.5" },
+  { id:"j4-spec-mm", day:4, lead:"nounedia", type:"Livrable", deliv:"L3", title:"Chapitre MM de la spécification et ses fiches de paramétrage" },
+  { id:"j4-spec-sd", day:4, lead:"raph", type:"Livrable", deliv:"L3", title:"Chapitre SD de la spécification et ses fiches de paramétrage" },
+  { id:"j4-spec-fi", day:4, lead:"nadia", type:"Livrable", deliv:"L3", title:"Chapitre FI et schéma des flux entre modules" },
+  { id:"j4-l3-final", day:4, lead:"nadia", with:["nounedia","raph"], type:"Livrable", deliv:"L3", due:"23/11 16h30", title:"Assembler et déposer la spécification", detail:"Un réglage fait dans SAP a sa capture, un réglage non fait dit pourquoi. Isabelle contrôle ce jour-là 4 fournisseurs, 4 clients et 6 articles." },
+
+  /* J5 */
+  { id:"j5-po", day:5, lead:"nounedia", type:"SAP", title:"INT-01 : commande d'achat en cartons (ME21N)",
+    steps:["En-tête : AGMM, groupe A10, FR01","Poste : division AG01 (remplacer 1210), magasin 121A, TVA V6","Frais de transport FGW1 dans les conditions","Sauvegarder, pas « Maintenir »"], ref:"Guide 3.1" },
+  { id:"j5-gr", day:5, lead:"nounedia", type:"SAP", title:"INT-01 : réception MIGO 101 et stock en pièces ; tester le contrôle qualité (E06)", ref:"Guide 3.2" },
+  { id:"j5-invoice", day:5, lead:"nounedia", type:"SAP", title:"INT-01 : facture fournisseur MIRO, solde à 0,00", ref:"Guide 3.3" },
+  { id:"j5-e01-test", day:5, lead:"nounedia", bonus:true, type:"SAP", title:"Bonus E01 : commande au-delà de 10 000 € bloquée puis libérée (ME29N)" },
+  { id:"j5-cost", day:5, lead:"nounedia", with:["nadia"], type:"SAP", title:"INT-01 : frais de transport sur le centre de coûts, lecture dans KSB1", ref:"Guide 3.6" },
+  { id:"j5-fi-check", day:5, lead:"nadia", type:"Contrôle", title:"INT-01 : contrôler les pièces de réception et de facture (FB03)" },
+  { id:"j5-payment", day:5, lead:"nadia", type:"SAP", title:"INT-01 : paiement fournisseur F-53 (FRBK1 / FRAC1), puis FBL1N", ref:"Guide 5.3" },
+  { id:"j5-transverse", day:5, transverse:true, lead:"nadia", type:"SAP", title:"Paiements fournisseur des équipes B et C sur les pièces qu'elles désignent" },
+  { id:"j5-recette", day:5, lead:"raph", with:["nounedia","nadia"], type:"Contrôle", title:"Recette INT-01 : stock en pièces, dette soldée, coût sur le centre, preuves complètes" },
+  { id:"j5-prep-int02", day:5, lead:"raph", type:"SAP", title:"Préparer INT-02 : prix, stock disponible, client complet" },
+
+  /* J6 */
+  { id:"j6-event", day:6, lead:"nounedia", with:["raph","nadia"], type:"Réunion", time:"9h15", title:"Lire la carte événement du client et répartir la réaction", detail:"Conversions carton fausses (confiture, yaourt) et transporteur en redressement. Réponse attendue le lendemain à 16h30.", ref:"Livret §11" },
+  { id:"j6-arnaud", day:6, lead:"nounedia", with:["raph"], type:"Réunion", time:"Créneau à confirmer", title:"Réunion avec Arnaud Blanc, compte rendu sous 24 h" },
+  { id:"j6-order", day:6, lead:"raph", type:"SAP", title:"INT-02 : commande A-CENTRALE ALIMEA avec prix par échelle (VA01)",
+    steps:["CMD, AGSD / 10 / 00, référence client","Poste : magasin 121A dans l'onglet Expédition","Vérifier l'échelle dans l'onglet Conditions"], ref:"Guide 4.1" },
+  { id:"j6-delivery", day:6, lead:"raph", type:"SAP", title:"INT-02 : livraison et sortie de stock (VL01N), facture (VF01)", ref:"Guide 4.2 et 4.3" },
+  { id:"j6-fi", day:6, lead:"nadia", type:"SAP", title:"INT-02 : contrôler la facture client, encaissement F-28, puis FBL5N", ref:"Guide 5.3" },
+  { id:"j6-margin", day:6, lead:"raph", with:["nadia"], type:"Contrôle", title:"INT-02 : lire la marge de la vente" },
+  { id:"j6-units", day:6, lead:"raph", type:"SAP", title:"INT-03 : corriger la conversion de A-CONS-02 et A-FRAI-01 (MM02)", detail:"Si SAP refuse : anomalie tracée et article corrigé suffixé B, ou No-Go argumenté." },
+  { id:"j6-carrier", day:6, lead:"nounedia", type:"SAP", title:"INT-03 : créer A-FRIGO RELAIS et l'utiliser dans une commande de transport" },
+  { id:"j6-crisis-draft", day:6, lead:"nounedia", with:["raph","nadia"], type:"Rédaction", title:"Premier jet de la note de crise : situation, options chiffrées, décision" },
+  { id:"j6-transverse", day:6, transverse:true, lead:"nadia", type:"SAP", title:"Encaissement pour B et paiement pour C, si demandés" },
+
+  /* J7 */
+  { id:"j7-test-run", day:7, lead:"raph", with:["nounedia","nadia"], type:"Contrôle", title:"Exécuter la recette et rejouer INT-01, 02, 03", detail:"Les cas MM sont exécutés par Nounedia, les cas FI par Nadia." },
+  { id:"j7-anomalies", day:7, lead:"raph", type:"Rédaction", title:"Journal des anomalies : une fiche par KO, gravité indiquée" },
+  { id:"j7-proof-check", day:7, lead:"raph", type:"Contrôle", title:"Contrôler le journal des preuves complet (une preuve inventée annule le livrable)" },
+  { id:"j7-fi-cases", day:7, lead:"nadia", type:"Contrôle", title:"Cas de test FI de l'équipe A" },
+  { id:"j7-transverse", day:7, transverse:true, lead:"nadia", type:"SAP", title:"Cas de test FI des équipes B et C, relecture pour D" },
+  { id:"j7-spec-update", day:7, each:true, type:"Livrable", deliv:"L3", title:"Mettre à jour ses fiches de paramétrage avec ce qui est fait (captures)" },
+  { id:"j7-pv", day:7, lead:"raph", with:["nounedia"], type:"Livrable", deliv:"L4", title:"PV de recette : indicateurs, décision Go, Go partiel ou No-Go, plan de remédiation", detail:"Aucun Go avec une anomalie bloquante connue (−3 points)." },
+  { id:"j7-crisis", day:7, lead:"nounedia", with:["raph","nadia"], type:"Livrable", deliv:"L4", title:"Note de crise d'une demi-page et projet de mail à Sophie Moreau", detail:"Plan d'action sur 3 jours avec la formation des utilisateurs touchés." },
+  { id:"j7-l4-final", day:7, lead:"nounedia", with:["raph","nadia"], type:"Livrable", deliv:"L4", due:"26/11 16h30", title:"Relire et déposer recette, PV et note de crise" },
+  { id:"j7-rehearsal", day:7, lead:"nounedia", with:["raph","nadia"], type:"Réunion", time:"Après 16h30", title:"Répéter la soutenance et préparer la démo sur des données existantes", detail:"Prévoir des captures de secours." },
+
+  /* J8 */
+  { id:"j8-slide", day:8, lead:"nounedia", with:["raph","nadia"], type:"Livrable", deliv:"L5", title:"Diapositive « Reprise des données et bascule »",
+    steps:["Raph : articles et clients à reprendre de NAV","Nadia : encours et soldes","Nounedia : quand, comment, plan de démarrage et support"] },
+  { id:"j8-open", day:8, lead:"nounedia", type:"Livrable", deliv:"L5", title:"Ouverture, conclusion et tenue du temps (20 min et 10 min de questions)" },
+  { id:"j8-demo-mm", day:8, lead:"nounedia", type:"Livrable", deliv:"L5", title:"Défendre le module MM et montrer INT-01" },
+  { id:"j8-demo-sd", day:8, lead:"raph", type:"Livrable", deliv:"L5", title:"Défendre le module SD, montrer INT-02 et présenter la recette" },
+  { id:"j8-demo-fi", day:8, lead:"nadia", type:"Livrable", deliv:"L5", title:"Défendre la partie FI et les écarts du système de projet" },
+  { id:"j8-debrief", day:8, lead:"nounedia", with:["raph","nadia"], type:"Réunion", time:"Après-midi", title:"Débriefing collectif", detail:"Sous 12/20 : oral individuel de rattrapage le 01 ou le 02/12." }
+];
+
+const openQuestions = [
+  "Centre de coûts et ordre interne confiés à Nadia le J4, son jour sans intervention transverse : à valider en équipe.",
+  "Horaire de l'atelier FI de Nadia le J3 et créneau de soutenance le J8 : à confirmer avec Isabelle.",
+  "Conversion carton de la confiture (100245) et du yaourt (300087) : valeur retenue et justification à écrire dans la spécification.",
+  "Entrepôt de Bordeaux (E12–E14, E16) : pas de profil EWM dans l'équipe A, à classer en phase 2 ou hors périmètre avec argument."
+];
+const penalties = [["Livrable en retard sans accord","−2 points"],["Livrable générique, sans lien avec AGRIVAL","−3 points"],["Go décidé avec une anomalie bloquante connue","−3 points"],["Preuve SAP inventée ou empruntée","livrable annulé"],["Objet d'une autre équipe modifié ou supprimé","−3 points et réparation le jour même"]];
+const scoring = [["Recueil du besoin et cadrage","J2–J3","3"],["Analyse d'adéquation au standard","J3","4"],["Spécification et paramétrage","J4","3"],["Réalisation dans SAP","J4–J7","5"],["Recette, INT-03 et note de crise","J7","3"],["Soutenance","J8","2"]];
+const sapTraps = [["Unité carton","CRN (CAR est refusé)"],["Division 1210 proposée dans ME21N","La remplacer par AG01, AG02 ou AG03"],["VA01 : quantité confirmée 0","Magasin 121A sur le poste (onglet Expédition)"],["MIRO : solde de 20 €","Code TVA V6 sur la fiche infoachat et le poste"],["KSU5 : aucun émetteur","Ne pas utiliser : KB15N ou ordre interne et KO88"],["Paiement : zone Banque société","FRBK1 / FRAC1, compte 11001000"],["Date refusée","Format affiché par SAP, par exemple 11/18/2026"],["VF04 montre d'autres livraisons","Filtrer sur AGSD, ne facturer que les nôtres"],["Numéro de tiers A-… refusé","Numéro de la plage, lettre A dans le nom"],["Caractère qui disparaît","Coller la valeur au lieu de la taper"]];
+
+/* Expand per-member tasks */
+const allTasks = [];
+tasks.forEach(t => {
+  if (t.each) memberIds.forEach(m => allTasks.push({ ...t, id:`${t.id}-${m}`, baseId:t.id, lead:m, with:[] }));
+  else allTasks.push({ with:[], ...t, baseId:t.id });
+});
+const phaseOf = t => phaseOverrides[t.baseId] || phaseByDay[t.day];
+const phaseById = id => phases.find(p => p.id === id);
+const dayByN = n => days.find(d => d.n === n);
+
+/* =========================================================
+   Progress store: GitHub repository file, with local cache
+   ========================================================= */
+const SETTINGS_KEY = "agrival-a-settings-v3";
+const CACHE_KEY = "agrival-a-progress-cache-v3";
+const DATA_PATH = "data/progress.json";
+const DATA_BRANCH = "progress-data";
+const API = "https://api.github.com";
+
+const readJson = (key, fallback) => { try { const v = JSON.parse(localStorage.getItem(key)); return v ?? fallback; } catch (e) { return fallback; } };
+const writeJson = (key, value) => { try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* storage unavailable */ } };
+
+function detectRepo() {
+  const host = location.hostname;
+  if (!host.endsWith(".github.io")) return null;
+  const owner = host.split(".")[0];
+  const first = location.pathname.split("/").filter(Boolean)[0];
+  return { owner, repo: first && !first.includes(".") ? first : host };
+}
+
+const store = {
+  settings: readJson(SETTINGS_KEY, {}),
+  items: readJson(CACHE_KEY, {}),        // key -> { by, at }
+  remoteItems: null,
+  pending: {},                            // key -> { done, by, at }
+  sha: null, etag: null,
+  status: "local", statusText: "", lastSync: null,
+  saving: false, saveTimer: null,
+
+  repo() {
+    const s = this.settings;
+    if (s.owner && s.repo) return { owner:s.owner, repo:s.repo };
+    return detectRepo();
+  },
+  mode() { if (!this.repo()) return "local"; return this.settings.token ? "write" : "read"; },
+  headers(withAuth = true) {
+    const h = { "Accept":"application/vnd.github+json", "X-GitHub-Api-Version":"2022-11-28" };
+    if (withAuth && this.settings.token) h.Authorization = `Bearer ${this.settings.token}`;
+    return h;
+  },
+  isDone(key) { return !!this.items[key]; },
+  info(key) { return this.items[key] || null; },
+
+  setStatus(status, text) { this.status = status; this.statusText = text; renderStatus(); },
+
+  recompute() {
+    const base = this.remoteItems ? { ...this.remoteItems } : { ...this.items };
+    Object.entries(this.pending).forEach(([k, op]) => { if (op.done) base[k] = { by:op.by, at:op.at }; else delete base[k]; });
+    this.items = base;
+    writeJson(CACHE_KEY, this.items);
+  },
+
+  toggle(key, done) {
+    const op = { done, by:this.settings.identity || "?", at:new Date().toISOString() };
+    if (this.mode() === "write") {
+      this.pending[key] = op;
+      this.recompute();
+      clearTimeout(this.saveTimer);
+      this.saveTimer = setTimeout(() => this.push(), 700);
+    } else {
+      if (done) this.items[key] = { by:op.by, at:op.at }; else delete this.items[key];
+      writeJson(CACHE_KEY, this.items);
+    }
+  },
+
+  async fetchFile(useEtag) {
+    const r = this.repo();
+    const headers = this.headers();
+    if (useEtag && this.etag) headers["If-None-Match"] = this.etag;
+    const url = `${API}/repos/${r.owner}/${r.repo}/contents/${DATA_PATH}?ref=${DATA_BRANCH}`;
+    const res = await fetch(url, { headers, cache:"no-store" });
+    if (res.status === 304) return { unchanged:true };
+    if (res.status === 404) return { items:{}, sha:null };
+    if (!res.ok) throw new Error(await errorText(res));
+    this.etag = res.headers.get("ETag");
+    const body = await res.json();
+    const parsed = JSON.parse(base64ToUtf8(body.content || "") || "{}");
+    return { items: parsed.items || {}, sha: body.sha };
+  },
+
+  async pull() {
+    if (this.mode() === "local" || this.saving) return;
+    try {
+      const data = await this.fetchFile(true);
+      if (!data.unchanged) { this.remoteItems = data.items; this.sha = data.sha; this.recompute(); render(); }
+      this.lastSync = new Date();
+      this.setStatus("ok", this.mode() === "write" ? "Synchronisé" : "Lecture seule");
+    } catch (e) {
+      this.setStatus("err", `Synchronisation impossible : ${e.message}`);
+    }
+  },
+
+  async ensureBranch() {
+    const r = this.repo();
+    const repoRes = await fetch(`${API}/repos/${r.owner}/${r.repo}`, { headers:this.headers() });
+    if (!repoRes.ok) throw new Error(await errorText(repoRes));
+    const defaultBranch = (await repoRes.json()).default_branch;
+    const refRes = await fetch(`${API}/repos/${r.owner}/${r.repo}/git/ref/heads/${defaultBranch}`, { headers:this.headers() });
+    if (!refRes.ok) throw new Error(await errorText(refRes));
+    const sha = (await refRes.json()).object.sha;
+    const create = await fetch(`${API}/repos/${r.owner}/${r.repo}/git/refs`, { method:"POST", headers:this.headers(), body:JSON.stringify({ ref:`refs/heads/${DATA_BRANCH}`, sha }) });
+    if (!create.ok && create.status !== 422) throw new Error(await errorText(create));
+  },
+
+  async push() {
+    if (this.saving) { clearTimeout(this.saveTimer); this.saveTimer = setTimeout(() => this.push(), 500); return; }
+    const batch = { ...this.pending };
+    if (!Object.keys(batch).length) return;
+    this.saving = true;
+    this.setStatus("busy", "Enregistrement…");
+    const r = this.repo();
+    try {
+      for (let attempt = 0; attempt < 4; attempt++) {
+        const remote = await this.fetchFile(false);
+        if (!remote.sha && attempt === 0) await this.ensureBranch();   // first write: data branch may not exist yet
+        const items = { ...remote.items };
+        Object.entries(batch).forEach(([k, op]) => { if (op.done) items[k] = { by:op.by, at:op.at }; else delete items[k]; });
+        const who = members[this.settings.identity]?.short || "Équipe A";
+        const keys = Object.keys(batch);
+        const payload = {
+          message: `${who} : avancement mis à jour (${keys.length} case${keys.length > 1 ? "s" : ""})`,
+          content: utf8ToBase64(JSON.stringify({ version:1, updatedAt:new Date().toISOString(), items }, null, 1)),
+          branch: DATA_BRANCH
+        };
+        if (remote.sha) payload.sha = remote.sha;
+        const res = await fetch(`${API}/repos/${r.owner}/${r.repo}/contents/${DATA_PATH}`, { method:"PUT", headers:this.headers(), body:JSON.stringify(payload) });
+        if (res.ok) {
+          const body = await res.json();
+          this.sha = body.content.sha; this.etag = null;
+          this.remoteItems = items;
+          keys.forEach(k => { if (this.pending[k] === batch[k]) delete this.pending[k]; });
+          this.recompute();
+          this.lastSync = new Date();
+          this.saving = false;
+          this.setStatus("ok", "Synchronisé");
+          render();
+          if (Object.keys(this.pending).length) this.push();
+          return;
+        }
+        if (res.status === 409 || res.status === 422) continue;   // concurrent write: retry on fresh data
+        throw new Error(await errorText(res));
+      }
+      throw new Error("conflit d'écriture répété, réessayez");
+    } catch (e) {
+      this.saving = false;
+      this.setStatus("err", `Non enregistré : ${e.message}`);
+    }
+  }
+};
+
+async function errorText(res) {
+  let msg = `${res.status}`;
+  try { const b = await res.json(); if (b.message) msg += ` ${b.message}`; } catch (e) { /* ignore */ }
+  if (res.status === 401) msg = "jeton refusé ou expiré";
+  if (res.status === 403) msg = "accès refusé (droits du jeton ou limite d'appels)";
+  return msg;
+}
+function utf8ToBase64(str) { const bytes = new TextEncoder().encode(str); let bin = ""; bytes.forEach(b => { bin += String.fromCharCode(b); }); return btoa(bin); }
+function base64ToUtf8(b64) { const bin = atob(b64.replace(/\s/g, "")); return new TextDecoder().decode(Uint8Array.from(bin, c => c.charCodeAt(0))); }
+
+/* =========================================================
+   Helpers
+   ========================================================= */
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const fmtTime = d => d.toLocaleTimeString("fr-FR", { hour:"2-digit", minute:"2-digit" });
+const fmtDayTime = iso => { const d = new Date(iso); return `${d.toLocaleDateString("fr-FR",{ day:"2-digit", month:"2-digit" })} ${fmtTime(d)}`; };
+
+function todayDayNumber() {
+  const now = new Date();
+  const iso = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}`;
+  const exact = days.find(d => d.date === iso);
+  if (exact) return exact.n;
+  const next = days.find(d => d.date > iso);
+  return next ? next.n : days[days.length-1].n;
+}
+const TODAY = todayDayNumber();
+
+function countdown(ms) {
+  if (ms <= 0) return "échéance passée";
+  const h = Math.floor(ms / 3600000), m = Math.floor((ms % 3600000) / 60000);
+  if (h >= 48) return `dans ${Math.floor(h/24)} jours`;
+  if (h >= 1) return `dans ${h} h ${String(m).padStart(2,"0")}`;
+  return `dans ${m} min`;
+}
+const progress = list => { const done = list.filter(t => store.isDone(t.id)).length; return { done, total:list.length, pct:list.length ? Math.round(done * 100 / list.length) : 0 }; };
+const leadTasks = (memberId, filter = () => true) => allTasks.filter(t => t.lead === memberId && filter(t));
+const routinesFor = (memberId, dayN) => [...commonRoutines, ...personalRoutines[memberId]].filter(r => r.days.includes(dayN));
+const routineKey = (memberId, routineId, dayN) => `r:${memberId}:${routineId}:${dayN}`;
+
+/* =========================================================
+   Rendering
+   ========================================================= */
+const view = { route:"today", day:TODAY, open:new Set() };
+
+function renderStatus() {
+  const el = document.getElementById("sync-status");
+  const mode = store.mode();
+  let cls = "", text;
+  if (mode === "local") text = "Mode local : avancement visible sur cet appareil seulement";
+  else if (store.status === "busy") { cls = "busy"; text = store.statusText; }
+  else if (store.status === "err") { cls = "err"; text = store.statusText; }
+  else if (store.lastSync) { cls = "ok"; text = `${mode === "write" ? "Synchronisé" : "Lecture seule"} · ${fmtTime(store.lastSync)}`; }
+  else text = "Connexion au dépôt…";
+  if (mode !== "local" && store.settings.identity) text += ` · ${members[store.settings.identity].short}`;
+  el.className = `sync-status ${cls}`;
+  el.querySelector("span").textContent = text;
+}
+
+function renderTabs() {
+  const entries = [
+    ["today","Aujourd'hui",null],
+    ...memberIds.map(id => [id, members[id].short, members[id].color]),
+    ["overview","Vue d'ensemble",null], ["planning","Planning",null], ["rules","Règles",null]
+  ];
+  document.getElementById("tabs").innerHTML = entries.map(([id,label,color]) =>
+    `<button class="tab" data-route="${id}" ${view.route === id ? 'aria-current="page"' : ""}>${color ? `<i class="dot" style="background:${color}"></i>` : ""}${esc(label)}</button>`).join("");
+}
+
+function daySwitch() {
+  return `<div class="day-switch" role="group" aria-label="Choisir le jour">${days.map(d =>
+    `<button data-day="${d.n}" aria-pressed="${d.n === view.day}" class="${d.n === TODAY ? "is-today" : ""}" title="${esc(d.label)}">J${d.n}</button>`).join("")}</div>`;
+}
+
+function taskItem(t, opts = {}) {
+  const done = store.isDone(t.id);
+  const info = store.info(t.id);
+  const meta = [];
+  if (opts.showLead) meta.push(`<span>${esc(members[t.lead].short)}</span>`);
+  if (opts.showDay) meta.push(`<span>J${t.day}</span>`);
+  if (t.time) meta.push(`<span>${esc(t.time)}</span>`);
+  if (t.due) meta.push(`<span class="due">À rendre ${esc(t.due)}</span>`);
+  if (t.deliv) meta.push(`<span class="tag deliv">${t.deliv}</span>`);
+  if (t.bonus) meta.push(`<span class="tag bonus">Bonus</span>`);
+  if (t.transverse) meta.push(`<span class="tag transverse">Transverse, hors équipe A</span>`);
+  if (!t.deliv && !t.transverse) meta.push(`<span class="tag">${esc(t.type)}</span>`);
+  if (t.with.length) meta.push(`<span>avec ${t.with.map(w => esc(members[w].short)).join(" et ")}</span>`);
+  if (done && info) meta.push(`<span class="who">✓ ${esc(members[info.by]?.short || "")} ${info.at ? esc(fmtDayTime(info.at)) : ""}</span>`);
+  const detailKey = `d:${t.id}`;
+  const hasMore = t.detail || t.steps || t.ref;
+  const more = hasMore ? `<details data-key="${detailKey}" ${view.open.has(detailKey) ? "open" : ""}><summary>${t.steps ? `Pas à pas (${t.steps.length})` : "Détails"}</summary>
+      ${t.detail ? `<p class="detail-text">${esc(t.detail)}</p>` : ""}
+      ${t.steps ? `<ol>${t.steps.map(s => `<li>${esc(s)}</li>`).join("")}</ol>` : ""}
+      ${t.ref ? `<p class="detail-text tiny">Référence : ${esc(t.ref)}</p>` : ""}</details>` : "";
+  return `<li class="task ${done ? "done" : ""}">
+    <input class="check" type="checkbox" id="cb-${t.id}${opts.suffix || ""}" data-task="${t.id}" ${done ? "checked" : ""} aria-label="${esc(t.title)}">
+    <div class="task-body"><label class="task-title" for="cb-${t.id}${opts.suffix || ""}">${esc(t.title)}</label>
+    <div class="task-meta">${meta.join("")}</div>${more}</div></li>`;
+}
+
+function routineBlock(memberId, dayN, personalOnly = false) {
+  const list = personalOnly ? personalRoutines[memberId].filter(r => r.days.includes(dayN)) : routinesFor(memberId, dayN);
+  if (!list.length) return "";
+  const done = list.filter(r => store.isDone(routineKey(memberId, r.id, dayN))).length;
+  return `<div class="routine"><div class="block-title">${personalOnly ? "Ma routine" : "Routine"} du J${dayN} · ${done}/${list.length}</div><ul>${list.map(r => {
+      const key = routineKey(memberId, r.id, dayN), checked = store.isDone(key);
+      return `<li><label><input class="check" type="checkbox" data-routine="${key}" ${checked ? "checked" : ""}><span><span class="time">${esc(r.time)}</span><span class="${checked ? "done-text" : ""}">${esc(r.text)}</span></span></label></li>`;
+    }).join("")}</ul></div>`;
+}
+
+function lateTasks(memberId) { return leadTasks(memberId, t => t.day < TODAY && !store.isDone(t.id)); }
+
+function lateBlock(memberId, compact) {
+  const late = lateTasks(memberId);
+  if (!late.length) return "";
+  const key = `late:${memberId}`;
+  return `<div class="late-box"><details data-key="${key}" ${view.open.has(key) || !compact ? "open" : ""}><summary class="block-title" style="cursor:pointer;list-style:none">À rattraper · ${late.length}</summary>
+    <ul class="task-list">${late.map(t => taskItem(t, { showDay:true, suffix:"-late" })).join("")}</ul></details></div>`;
+}
+
+function renderToday() {
+  const d = dayByN(view.day), ph = phaseById(phaseByDay[view.day]);
+  const now = new Date();
+  const next = deadlines.find(x => new Date(x.at) > now);
+  const commonList = commonRoutines.filter(r => r.days.includes(view.day));
+  const columns = memberIds.map(id => {
+    const m = members[id];
+    const mine = leadTasks(id, t => t.day === view.day);
+    const support = allTasks.filter(t => t.day === view.day && t.with.includes(id));
+    const p = progress(mine);
+    return `<section class="card member-col" style="--mc:${m.color}">
+      <div class="member-top"><div><h2>${esc(m.short)}</h2><div class="member-role">${esc(m.module)} · ${esc(m.role.split(" · ")[0])}</div></div>
+        <div class="count-big">${p.done}/${p.total}<span>tâches du jour</span></div></div>
+      <div class="bar"><i style="width:${p.pct}%;background:${m.color}"></i></div>
+      ${view.day === TODAY ? lateBlock(id, true) : ""}
+      ${routineBlock(id, view.day, true)}
+      <div><div class="block-title">Tâches du J${view.day}</div>
+        ${mine.length ? `<ul class="task-list">${mine.map(t => taskItem(t, { suffix:"-today" })).join("")}</ul>` : `<p class="empty">Aucune tâche ce jour-là.</p>`}</div>
+      ${support.length ? `<div class="support-line"><strong>En appui :</strong> ${support.map(t => `${esc(t.title)} (${esc(members[t.lead].short)})`).join(" ; ")}</div>` : ""}
+    </section>`;
+  }).join("");
+  return `<section class="card">
+      <div class="hero"><div>
+        <div class="phase-label" style="color:${ph.color}"><i style="background:${ph.color}"></i>SAP Activate · ${ph.name}</div>
+        <div class="day-name">J${d.n} · ${esc(d.label)}${view.day === TODAY ? ' <span class="tag today">aujourd\'hui</span>' : ""}</div>
+        <div class="muted">${esc(d.focus)}</div></div>
+        ${next ? `<div class="deadline-box"><span class="tiny muted">Prochaine remise</span><strong>${esc(next.label)}</strong><span class="small muted">${new Date(next.at).toLocaleDateString("fr-FR",{ weekday:"long", day:"2-digit", month:"2-digit" })} à ${fmtTime(new Date(next.at))} · ${countdown(new Date(next.at) - now)}</span></div>` : ""}
+      </div>${daySwitch()}
+      ${commonList.length ? `<div class="common-routine"><div class="block-title" style="color:var(--daily)">Routine de toute l'équipe, chaque jour</div><ul>${commonList.map(r => `<li><b>${esc(r.time)}</b><span>${esc(r.text)}</span></li>`).join("")}</ul></div>` : ""}</section>
+    <div class="grid cols-3" style="margin-top:18px">${columns}</div>`;
+}
+
+function renderMember(id) {
+  const m = members[id];
+  const p = progress(leadTasks(id));
+  let html = `<section class="card member-col" style="--mc:${m.color}">
+      <div class="member-top"><div><h2>${esc(m.name)}</h2><div class="member-role">${esc(m.role)} · user SAP ${esc(m.user)}</div></div>
+      <div class="count-big">${p.pct} %<span>${p.done} sur ${p.total} tâches</span></div></div>
+      <div class="bar"><i style="width:${p.pct}%;background:${m.color}"></i></div>
+      <p class="small muted" style="margin:0">${esc(m.scope)}</p>
+      ${lateBlock(id, false)}
+    </section>
+    <section class="card" style="margin-top:18px"><h3>Routine quotidienne</h3><p class="small muted" style="margin:4px 0 0">À refaire chaque jour, les cases repartent à zéro d'un jour à l'autre.</p>${daySwitch()}<div style="margin-top:12px">${routineBlock(id, view.day) || '<p class="empty">Pas de routine ce jour-là.</p>'}</div></section>`;
+  phases.forEach(ph => {
+    const phaseDays = days.filter(d => phaseByDay[d.n] === ph.id);
+    html += `<div class="phase-head" style="--pc:${ph.color}"><h2>${ph.name}</h2><span class="small muted">${esc(ph.span)}</span><p>${esc(ph.goal)}</p></div>`;
+    phaseDays.forEach(d => {
+      const list = allTasks.filter(t => t.day === d.n && t.lead === id);
+      const support = allTasks.filter(t => t.day === d.n && t.with.includes(id));
+      const dp = progress(list);
+      const key = `day:${id}:${d.n}`;
+      const isOpen = view.open.has(key) || (!view.open.has(`closed:${key}`) && (d.n === TODAY || d.n === TODAY + 1));
+      html += `<details class="day-card ${d.n === TODAY ? "is-today" : ""}" data-key="${key}" ${isOpen ? "open" : ""}>
+        <summary><span class="chev" aria-hidden="true">›</span><span><span class="d-title">J${d.n} · ${esc(d.short)}</span> <span class="d-sub">· ${esc(d.focus)}</span></span>
+        ${d.n === TODAY ? '<span class="tag today">aujourd\'hui</span>' : ""}<span class="d-count">${dp.done}/${dp.total}</span></summary>
+        <div class="day-inner">${list.length ? `<ul class="task-list">${list.map(t => taskItem(t)).join("")}</ul>` : '<p class="empty">Aucune tâche en propre.</p>'}
+        ${support.length ? `<div class="support-line" style="margin-bottom:10px"><strong>En appui :</strong> ${support.map(t => `${esc(t.title)} (${esc(members[t.lead].short)})`).join(" ; ")}</div>` : ""}</div></details>`;
+    });
+  });
+  return html;
+}
+
+function renderOverview() {
+  const now = new Date();
+  const nextIdx = deadlines.findIndex(d => new Date(d.at) > now);
+  const phaseCards = phases.map(ph => {
+    const p = progress(allTasks.filter(t => phaseOf(t) === ph.id));
+    return `<section class="card phase-card" style="--pc:${ph.color}"><div class="phase-label" style="color:${ph.color}">${esc(ph.span)}</div><h2 style="margin-top:4px">${ph.name}</h2>
+      <p class="small" style="margin:8px 0 0">${esc(ph.goal)}</p><ul>${ph.activities.map(a => `<li>${esc(a)}</li>`).join("")}</ul>
+      <div class="gate"><strong>Critère de sortie :</strong> ${esc(ph.gate)}</div>
+      <div class="bar" style="margin-top:12px"><i style="width:${p.pct}%;background:${ph.color}"></i></div><div class="tiny muted" style="margin-top:4px">${p.done}/${p.total} tâches</div></section>`;
+  }).join("");
+  const deliverableRows = deadlines.map((d, i) => {
+    const p = progress(allTasks.filter(t => t.deliv === d.id));
+    const late = new Date(d.at) < now && p.pct < 100;
+    return `<tr class="${i === nextIdx ? "row-next" : ""}"><td><strong>${esc(d.label)}</strong><div class="tiny muted">${esc(d.note)}</div></td>
+      <td>${new Date(d.at).toLocaleDateString("fr-FR",{ weekday:"short", day:"2-digit", month:"2-digit" })} ${fmtTime(new Date(d.at))}<div class="tiny muted">${countdown(new Date(d.at) - now)}</div></td>
+      <td>${esc(members[d.owner].short)}</td><td style="min-width:120px">${p.done}/${p.total} ${late ? '<span class="tag late">en retard</span>' : ""}<div class="bar" style="margin-top:6px"><i style="width:${p.pct}%"></i></div></td></tr>`;
+  }).join("");
+  const loadRows = memberIds.map(id => {
+    const cells = days.map(d => {
+      const n = leadTasks(id, t => t.day === d.n).length, tv = leadTasks(id, t => t.day === d.n && t.transverse).length;
+      const heat = n === 0 ? "" : n <= 3 ? "heat-1" : n <= 6 ? "heat-2" : "heat-3";
+      return `<td class="num ${heat}">${n || "·"}${tv ? `<div class="tiny" style="color:var(--nadia)">dont ${tv} transv.</div>` : ""}</td>`;
+    }).join("");
+    const p = progress(leadTasks(id));
+    return `<tr><td><strong style="color:${members[id].color}">${esc(members[id].short)}</strong><div class="tiny muted">${esc(members[id].module)}</div></td>${cells}<td class="num"><strong>${p.total}</strong><div class="tiny muted">${p.pct} % fait</div></td></tr>`;
+  }).join("");
+  return `<div class="section-title" style="margin-top:0"><h2>Méthodologie SAP Activate</h2><span class="small muted">Discover est déjà fait (AGRIVAL a choisi SAP) ; Run commence après le go-live du 1er mars 2027.</span></div>
+    <div class="grid cols-4">${phaseCards}</div>
+    <div class="section-title"><h2>Livrables</h2></div>
+    <section class="card"><div class="table-scroll"><table><thead><tr><th>Livrable</th><th>Remise</th><th>Porteur</th><th>Avancement</th></tr></thead><tbody>${deliverableRows}</tbody></table></div></section>
+    <div class="section-title"><h2>Répartition de la charge</h2><span class="small muted">Nombre de tâches en propre par jour</span></div>
+    <section class="card"><div class="table-scroll"><table><thead><tr><th>Membre</th>${days.map(d => `<th class="num">J${d.n}</th>`).join("")}<th class="num">Total</th></tr></thead><tbody>${loadRows}</tbody></table></div>
+      <p class="small muted" style="margin:12px 0 0">Tous les trois sont consultants fonctionnels sur leur module. En plus : Nounedia pilote (stand-up, client, L1, note de crise, soutenance) ; Raph porte la recette et assemble L2 ; Nadia assemble L3 le J4 et garde des journées légères quand elle intervient pour les autres équipes (J3, J5, J6, J7).</p></section>
+    <div class="section-title"><h2>Points à trancher</h2></div>
+    <section class="card"><ul class="list">${openQuestions.map(q => `<li>${esc(q)}</li>`).join("")}</ul></section>`;
+}
+
+function renderPlanning() {
+  const rows = days.map(d => {
+    const ph = phaseById(phaseByDay[d.n]);
+    const cells = memberIds.map(id => `<td>${leadTasks(id, t => t.day === d.n).map(t => {
+      const done = store.isDone(t.id);
+      return `<label class="cell-task ${done ? "done" : ""}"><input type="checkbox" data-task="${t.id}" ${done ? "checked" : ""}><span>${esc(t.title)}${t.due ? ` <strong>· ${esc(t.due)}</strong>` : ""}</span></label>`;
+    }).join("") || '<span class="faint">·</span>'}</td>`).join("");
+    return `<tr class="${d.n === TODAY ? "row-next" : ""}"><td style="min-width:120px"><div class="phase-label" style="color:${ph.color};font-size:11.5px">${ph.name}</div><strong>J${d.n}</strong><div class="tiny muted">${esc(d.short)}</div></td>${cells}</tr>`;
+  }).join("");
+  return `<section class="card"><div class="table-scroll"><table><thead><tr><th>Jour</th>${memberIds.map(id => `<th style="color:${members[id].color}">${esc(members[id].short)} · ${esc(members[id].module)}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table></div>
+    <p class="tiny muted" style="margin:12px 0 0">Du 30/11 au 02/12 : tampon, oraux de rattrapage et bilan.</p></section>`;
+}
+
+function renderRules() {
+  return `<div class="grid cols-3">
+    <section class="card"><h3>Les 4 règles du SAP partagé</h3><ol class="list" style="margin-top:8px">
+      <li>Travailler uniquement avec son user.</li><li>Tout porte la lettre A, les tiers un numéro de 12310001 à 12310099.</li>
+      <li>Ne jamais modifier ni supprimer un objet d'une autre équipe ou un objet modèle.</li><li>Chaque document SAP a sa ligne et sa capture dans le journal des preuves.</li></ol>
+      <p class="small muted">Interdits : OBYC, VKOA, MMPV, OB52, SCC4, et la file SMQ2 d'un autre.</p></section>
+    <section class="card"><h3>Pénalités</h3><table style="margin-top:6px"><tbody>${penalties.map(([a,b]) => `<tr><td>${esc(a)}</td><td><strong>${esc(b)}</strong></td></tr>`).join("")}</tbody></table></section>
+    <section class="card"><h3>Notation sur 20, seuil 12</h3><table style="margin-top:6px"><tbody>${scoring.map(r => `<tr><td>${esc(r[0])}<div class="tiny muted">${esc(r[1])}</div></td><td class="num"><strong>${r[2]}</strong></td></tr>`).join("")}</tbody></table>
+      <p class="small muted">8 points sur le réel fait dans SAP. Ajustement individuel de ±2 points.</p></section>
+    <section class="card"><h3>Aide</h3><ul class="list" style="margin-top:8px">
+      <li>3 déblocages pour toute l'équipe, plus le cours quotidien.</li><li>Jamais bloqué plus de 15 min : solution de repli du livret (§6.5).</li>
+      <li>Sinon : fiche incident en message Slack à Mélissa et Isabelle.</li><li>Client et planning : Isabelle Maisonial.</li></ul></section>
+    <section class="card" style="grid-column:1/-1"><h3>Pièges SAP déjà rencontrés</h3><div class="table-scroll"><table style="margin-top:6px"><tbody>${sapTraps.map(([a,b]) => `<tr><td>${esc(a)}</td><td>${esc(b)}</td></tr>`).join("")}</tbody></table></div></section>
+  </div>`;
+}
+
+function render() {
+  renderTabs(); renderStatus();
+  const r = view.route;
+  const html = r === "today" ? renderToday() : r === "overview" ? renderOverview() : r === "planning" ? renderPlanning() : r === "rules" ? renderRules() : renderMember(r);
+  document.getElementById("main").innerHTML = html;
+}
+
+/* =========================================================
+   Events
+   ========================================================= */
+function needsIdentity() {
+  if (store.mode() !== "local" && !store.settings.identity) { openSettings("Choisissez d'abord qui vous êtes, puis collez le jeton pour enregistrer."); return true; }
+  return false;
+}
+document.addEventListener("change", e => {
+  const el = e.target;
+  const key = el.dataset.task || el.dataset.routine;
+  if (!key) return;
+  if (store.mode() === "read") { el.checked = !el.checked; openSettings("La page est en lecture seule : ajoutez le jeton de l'équipe pour cocher."); return; }
+  if (needsIdentity()) { el.checked = !el.checked; return; }
+  store.toggle(key, el.checked);
+  render();
+});
+document.addEventListener("toggle", e => {
+  const el = e.target;
+  if (!el.dataset || !el.dataset.key) return;
+  if (el.open) { view.open.add(el.dataset.key); view.open.delete(`closed:${el.dataset.key}`); }
+  else { view.open.delete(el.dataset.key); view.open.add(`closed:${el.dataset.key}`); }
+}, true);
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-route],[data-day],[data-action]");
+  if (!el) return;
+  if (el.dataset.route) { view.route = el.dataset.route; history.replaceState(null, "", `#${view.route}`); render(); window.scrollTo(0, 0); }
+  else if (el.dataset.day) { view.day = Number(el.dataset.day); render(); }
+  else if (el.dataset.action === "settings") openSettings();
+  else if (el.dataset.action === "close-settings") document.getElementById("settings-dialog").close();
+  else if (el.dataset.action === "forget-token") { delete store.settings.token; writeJson(SETTINGS_KEY, store.settings); document.getElementById("set-token").value = ""; showSettingsMsg("Jeton supprimé de ce navigateur."); render(); }
+  else if (el.dataset.action === "save-settings") saveSettings();
+});
+
+function openSettings(message) {
+  const repo = store.repo() || {};
+  document.getElementById("set-identity").value = store.settings.identity || "";
+  document.getElementById("set-owner").value = repo.owner || "";
+  document.getElementById("set-repo").value = repo.repo || "";
+  document.getElementById("set-token").value = store.settings.token || "";
+  showSettingsMsg(message || "");
+  const dlg = document.getElementById("settings-dialog");
+  if (!dlg.open) dlg.showModal();
+}
+function showSettingsMsg(text) { const el = document.getElementById("settings-msg"); el.hidden = !text; el.textContent = text; }
+async function saveSettings() {
+  const s = store.settings;
+  s.identity = document.getElementById("set-identity").value;
+  const owner = document.getElementById("set-owner").value.trim(), repo = document.getElementById("set-repo").value.trim();
+  const detected = detectRepo();
+  if (owner && repo && !(detected && detected.owner === owner && detected.repo === repo)) { s.owner = owner; s.repo = repo; } else { delete s.owner; delete s.repo; }
+  const token = document.getElementById("set-token").value.trim();
+  if (token) s.token = token; else delete s.token;
+  writeJson(SETTINGS_KEY, s);
+  store.remoteItems = null; store.etag = null;
+  if (store.mode() === "local") { showSettingsMsg("Enregistré. Aucun dépôt renseigné : la page reste en mode local."); render(); return; }
+  showSettingsMsg("Test de l'accès au dépôt…");
+  try {
+    const r = store.repo();
+    const res = await fetch(`${API}/repos/${r.owner}/${r.repo}`, { headers:store.headers() });
+    if (!res.ok) throw new Error(await errorText(res));
+    const info = await res.json();
+    await store.pull();
+    if (store.mode() === "write" && !(info.permissions && info.permissions.push)) showSettingsMsg("Dépôt trouvé, mais le jeton ne donne pas le droit d'écrire.");
+    else showSettingsMsg(store.mode() === "write" ? "Accès en écriture OK. Vos cases cochées sont partagées avec l'équipe." : "Dépôt trouvé : lecture seule, sans jeton.");
+  } catch (e) { showSettingsMsg(`Échec : ${e.message}`); }
+  render();
+}
+
+/* =========================================================
+   Start
+   ========================================================= */
+const initialRoute = location.hash.replace("#", "");
+if (["today","overview","planning","rules",...memberIds].includes(initialRoute)) view.route = initialRoute;
+render();
+store.pull();
+setInterval(() => { if (!document.hidden) store.pull(); }, store.settings.token ? 60000 : 180000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) store.pull(); });
+setInterval(() => { if (view.route === "today" || view.route === "overview") render(); }, 60000);
+</script>
+</body>
+</html>
