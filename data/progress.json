@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updatedAt": "2026-11-19T10:30:47.654Z",
+ "updatedAt": "2026-11-19T10:30:49.257Z",
  "items": {
   "j1-sap-login-nounedia": {
    "by": "nounedia",
@@ -13,10 +13,6 @@
   "j1-sap-login-nadia": {
    "by": "nadia",
    "at": "2026-11-19T10:25:24.356Z"
-  },
-  "j2-cr": {
-   "by": "nadia",
-   "at": "2026-11-19T10:30:46.467Z"
   }
  }
 }
