@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updatedAt": "2026-11-19T12:54:09.194Z",
+ "updatedAt": "2026-11-19T12:54:10.933Z",
  "items": {
   "j1-sap-login-nounedia": {
    "by": "nounedia",
@@ -41,6 +41,10 @@
   "r:nounedia:c-course:2": {
    "by": "nounedia",
    "at": "2026-11-19T12:54:07.710Z"
+  },
+  "r:nounedia:c-user:2": {
+   "by": "nounedia",
+   "at": "2026-11-19T12:54:09.775Z"
   }
  }
 }
