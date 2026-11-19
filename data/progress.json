@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updatedAt": "2026-11-19T12:34:15.719Z",
+ "updatedAt": "2026-11-19T12:34:36.030Z",
  "items": {
   "j1-sap-login-nounedia": {
    "by": "nounedia",
@@ -17,6 +17,14 @@
   "j1-read-raph": {
    "by": "raph",
    "at": "2026-11-19T12:34:14.381Z"
+  },
+  "r:raph:c-standup:2": {
+   "by": "raph",
+   "at": "2026-11-19T12:34:34.219Z"
+  },
+  "r:raph:c-course:2": {
+   "by": "raph",
+   "at": "2026-11-19T12:34:34.823Z"
   }
  }
 }
