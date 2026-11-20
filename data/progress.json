@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updatedAt": "2026-11-20T13:12:37.943Z",
+ "updatedAt": "2026-11-20T13:19:13.871Z",
  "items": {
   "j1-sap-login-nounedia": {
    "by": "nounedia",
@@ -145,6 +145,10 @@
   "j3-meeting": {
    "by": "nounedia",
    "at": "2026-11-20T13:12:36.791Z"
+  },
+  "j3-bpmn-sales": {
+   "by": "raph",
+   "at": "2026-11-20T13:19:12.702Z"
   }
  }
 }
