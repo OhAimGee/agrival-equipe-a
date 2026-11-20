@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updatedAt": "2026-11-20T08:05:00.580Z",
+ "updatedAt": "2026-11-20T08:05:06.012Z",
  "items": {
   "j1-sap-login-nounedia": {
    "by": "nounedia",
@@ -77,6 +77,10 @@
   "r:nadia:c-standup:2": {
    "by": "nadia",
    "at": "2026-11-20T08:04:59.475Z"
+  },
+  "r:nadia:c-course:2": {
+   "by": "nadia",
+   "at": "2026-11-20T08:05:04.891Z"
   }
  }
 }
