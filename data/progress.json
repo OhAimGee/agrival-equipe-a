@@ -1,6 +1,6 @@
 {
  "version": 1,
- "updatedAt": "2026-11-20T10:46:53.461Z",
+ "updatedAt": "2026-11-20T10:47:04.959Z",
  "items": {
   "j1-sap-login-nounedia": {
    "by": "nounedia",
@@ -109,6 +109,14 @@
   "r:nounedia:n-standup:2": {
    "by": "nounedia",
    "at": "2026-11-20T10:46:51.954Z"
+  },
+  "r:nounedia:n-cr:2": {
+   "by": "nounedia",
+   "at": "2026-11-20T10:47:03.250Z"
+  },
+  "r:nounedia:n-plan:2": {
+   "by": "nounedia",
+   "at": "2026-11-20T10:47:03.867Z"
   }
  }
 }
